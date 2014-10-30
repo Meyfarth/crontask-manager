@@ -1,0 +1,22 @@
+{
+    "name": "meyfarth/crontask-manager",
+    "type" : "library",
+    "license": "MIT",
+    "description" : "A crontask manager that permits you to schedule symfony crontasks via database",
+    "homepage": "https://github.com/Meyfarth/crontask-manager",
+    "keywords": ["crontask","cron","cronmanager","command"],
+    "authors": [
+        {
+            "name": "Sébastien GARCIA",
+            "email" : "garcia.sebastien@hotmail.fr",
+            "role": "developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "doctrine/orm": "~2.2,>=2.2.3"
+    },
+    "autoload": {
+        "psr-0": { "Meyfarth\\CrontaskBundle\\": "src/" }
+    }
+}

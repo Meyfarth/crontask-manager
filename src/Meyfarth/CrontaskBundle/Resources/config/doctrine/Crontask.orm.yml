@@ -1,0 +1,33 @@
+Meyfarth\CrontaskBundle\Entity\Crontask:
+    type: entity
+    table: meyfarth_crontask
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        name:
+            type: string
+            length: 255
+        commands:
+            type: array
+        commandInterval:
+            type: integer
+            column: command_interval
+        typeInterval:
+            type: smallint
+            column: type_interval
+            columnDefinition: ENUM(1,60,3600)
+        firstRun:
+            type: time
+            column: first_run
+        lastRun:
+            type: datetime
+            column: last_run
+            nullable: true
+        isActive:
+            type: boolean
+            column: is_active
+    lifecycleCallbacks: {  }
