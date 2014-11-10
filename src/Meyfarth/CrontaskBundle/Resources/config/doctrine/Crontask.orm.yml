@@ -19,9 +19,8 @@ Meyfarth\CrontaskBundle\Entity\Crontask:
         typeInterval:
             type: smallint
             column: type_interval
-            columnDefinition: ENUM(1,60,3600)
         firstRun:
-            type: time
+            type: datetime
             column: first_run
         lastRun:
             type: datetime

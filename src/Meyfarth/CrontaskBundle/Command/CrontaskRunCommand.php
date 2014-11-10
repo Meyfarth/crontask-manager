@@ -10,27 +10,31 @@
 namespace Meyfarth\CrontaskBundle\Command;
 
 
+use Meyfarth\CrontaskBundle\Entity\Crontask;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Class CrontaskRunCommand
+ * @package Meyfarth\CrontaskBundle\Command
+ */
 class CrontaskRunCommand extends ContainerAwareCommand {
     private $output;
 
     protected function configure(){
         $this->setName('meyfarth:crontask:run')
             ->setDescription('Runs Crontasks')
-            ->addOption('force', null, InputOption::VALUE_OPTIONAL |InputOption::VALUE_IS_ARRAY, 'Forces crontasks even if inactive or if the lastrun is outdated')
-            ->addOption('ignore', null, InputOption::VALUE_OPTIONAL |InputOption::VALUE_IS_ARRAY, 'Ignores crontask even if it should be run');
+            ->addOption('force', null, InputOption::VALUE_REQUIRED |InputOption::VALUE_IS_ARRAY, 'Forces crontasks even if inactive or if the lastrun is outdated')
+            ->addOption('ignore', null, InputOption::VALUE_REQUIRED |InputOption::VALUE_IS_ARRAY, 'Ignores crontask even if it should be run');
     }
 
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int|null|void
-     * @todo implement force and ignore options
      */
     protected function execute(InputInterface $input, OutputInterface $output){
         $output->writeln('<comment>Running crontasks</comment>');
@@ -40,11 +44,45 @@ class CrontaskRunCommand extends ContainerAwareCommand {
         $em = $this->getContainer()->get('doctrine.orm.entity_manager');
         $crontasks = $em->getRepository('MeyfarthCrontaskBundle:Crontask')->findAll();
 
+        $forces = $input->getOption('force');
+        $ignores = $input->getOption('ignore');
+
+        $isForceOption = (is_array($forces) && count($forces) > 0);
+
+        // Lower force names
+        foreach($forces as &$force){
+            $force = strtolower($force);
+        }
+
+        $isIgnoreOption = (is_array($ignores) && count($ignores) > 0);
+
+        // lower ignore names
+        foreach($ignores as &$ignore){
+            $ignore = strtolower($ignore);
+
+        }
+
+        // If ignore AND force for the same crontask, it'll be ignored
+        foreach($forces as $key => $force){
+            if(in_array($force, $ignores)){
+                unset($forces[$key]);
+            }
+        }
+
+        // Parse each crontask
         foreach($crontasks as $crontask){
+
+            if($isIgnoreOption && in_array(strtolower($crontask->getName()), $ignores)){
+                sprintf('Ignoring crontas <info>%s</info>', $crontask);
+            }
+
+            if($isForceOption && in_array(strtolower($crontask->getName()), $forces)){
+                $this->executeCrontask($crontask, true);
+            }
+
             // Check if we launch this one
             if(!$crontask->getIsActive()){
-                $output->writeln(sprintf('Skipping crontask <info>%s</info> (<error>%s</error>', $crontask, 'inactive'));
-                continue;
+                $output->writeln(sprintf('Skipping crontask <info>%s</info> (<error>%s</error>)', $crontask, 'inactive'));
             }
 
             // Check date
@@ -53,31 +91,13 @@ class CrontaskRunCommand extends ContainerAwareCommand {
             // Interval in minutes
             $nextrun = $lastrun + $crontask->getCommandInterval() * $crontask->getTypeInterval();
 
-            if(!(time() >= $nextrun)){
-                $output->writeln(sprintf('Skipping crontask <info>%s</info> (<error>%s</error>', $crontask, 'interval'));
-                continue;
+
+
+            if(!(time() >= $nextrun) && $error != ""){
+                $output->writeln(sprintf('Skipping crontask <info>%s</info> (<error>%s</error>)', $crontask, 'interval'));
             }
+            $this->executeCrontask($crontask);
 
-            $output->writeln(sprintf('Running crontask <info>%s</info>', $crontask));
-
-            // Updating last run
-            $crontask->setLastRun(new \DateTime());
-
-            try{
-                $commands = $crontask->getCommands();
-                foreach($commands as $command){
-                    $output->writeln(sprintf('Executing command <comment>%s</comment>', $command));
-                    // Running the command
-                    $this->runCommand($command);
-                }
-
-                $output->writeln('<info>Success</info>');
-            }catch(\Exception $e){
-                $output->writeln('<error>Error</error>');
-            }
-
-            // Update last run
-            $em->persist($crontask);
         }
 
         $em->flush();
@@ -85,7 +105,40 @@ class CrontaskRunCommand extends ContainerAwareCommand {
         $output->writeln('<comment>No more crontasks, job done!</comment>');
     }
 
+    /**
+     * Executes all tasks in the crontask, updates lastRun and persist
+     * @param Crontask $crontask
+     * @param boolean $isForced if true, show 'forced' on the message
+     */
+    private function executeCrontask(Crontask $crontask, $isForced){
+        $sprintfStr = 'Running crontask <info>%s</info>'.($isForced ? ' (forced)' : '');
+        $output->writeln(sprintf($sprintfStr), $crontask);
 
+        // Updating last run
+        $crontask->setLastRun(new \DateTime());
+
+        try{
+            $commands = $crontask->getCommands();
+            foreach($commands as $command){
+                $output->writeln(sprintf('Executing command <comment>%s</comment>', $command));
+                // Running the command
+                $this->runCommand($command);
+            }
+
+            $output->writeln('<info>Success</info>');
+        }catch(\Exception $e){
+            $output->writeln('<error>Error</error>');
+        }
+
+        // Update last run
+        $em->persist($crontask);
+    }
+
+    /**
+     * Run the command given as string (my:namespace [arg1[ arg2[ arg3[ ...]]]])
+     * @param $string
+     * @return bool
+     */
     private function runCommand($string){
 
         // Get the namespace

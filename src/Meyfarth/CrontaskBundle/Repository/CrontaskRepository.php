@@ -13,4 +13,15 @@ use Doctrine\ORM\EntityRepository;
 
 class CrontaskRepository extends EntityRepository {
 
+    /**
+     * Get all actives crontasks
+     * @return mixed
+     */
+    public function findAllActive(){
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.isActive = :active')
+            ->setParameter('active', true)
+            ->getQuery()
+            ->execute();
+    }
 } 

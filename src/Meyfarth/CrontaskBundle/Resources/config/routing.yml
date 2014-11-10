@@ -1,3 +1,19 @@
-meyfarth_crontask_homepage:
-    path:     /hello/{name}
-    defaults: { _controller: MeyfarthCrontaskBundle:Default:index }
+meyfarth_crontask_index:
+    path:     /index
+    defaults: { _controller: MeyfarthCrontaskBundle:Crontask:index }
+
+meyfarth_crontask_new:
+    path:   /new
+    defaults: { _controller: MeyfarthCrontaskBundle:Crontask:new }
+
+meyfarth_crontask_update:
+    path: /updt/{id}
+    defaults: { _controller: MeyfarthCrontaskBundle:Crontask:new }
+    requirements:
+        id: \d+
+
+meyfarth_crontask_delete:
+    path: /del/{id}
+    defaults: { _controller: MeyfarthCrontaskBundle:Crontask:delete }
+    requirements:
+        id: \d+

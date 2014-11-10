@@ -1,0 +1,11 @@
+meyfarth:
+    crontask:
+        name: "crontask"
+        commands: "commandes"
+        lastrun: "dernière exécution"
+        active: "actif"
+        create: "Nouveau crontask"
+        add_command: "ajouter une commande"
+        delete_command: "supprimer la commande"
+    actions: "actions"
+    back: "retour"

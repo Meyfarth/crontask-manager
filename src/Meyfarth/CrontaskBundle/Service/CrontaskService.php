@@ -18,4 +18,19 @@ class CrontaskService {
     const LABEL_INTERVAL_SECONDS = 's';
     const LABEL_INTERVAL_MINUTES = 'min';
     const LABEL_INTERVAL_HOURS = 'h';
+
+
+    /**
+     * Convert a string to a typeInterval
+     * @param $stringInterval
+     * @return int
+     */
+    public static function convertToTypeInterval($stringInterval){
+        if(in_array($stringInterval, array('h', 'hour', 'hours'))){
+            return self::TYPE_INTERVAL_HOURS;
+        }elseif(in_array($stringInterval, array('m', 'min', 'minute', 'minutes'))){
+            return self::TYPE_INTERVAL_MINUTES;
+        }
+        return self::TYPE_INTERVAL_SECONDS;
+    }
 }
