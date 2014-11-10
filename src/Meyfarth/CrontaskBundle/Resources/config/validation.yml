@@ -1,7 +1,0 @@
-Meyfarth\CrontaskBundle\Entity\Crontask:
-    properties:
-        name:
-            - NotBlank: ~
-        lastRun:
-            - NotBlank: ~
-            - Type: \DateTime
