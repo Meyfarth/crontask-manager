@@ -24,8 +24,8 @@ class CronTaskListCommand extends ContainerAwareCommand{
     protected function configure(){
 
         $this
-            ->setName('mtg:crontask:list')
-            ->setDescription('Liste tous les cron')
+            ->setName('mey:crontask:list')
+            ->setDescription('List all crontasks')
             ->addOption('all', 'a', InputOption::VALUE_NONE, 'If defined, show inactive crontasks')
             ->addOption('details', 'd', InputOption::VALUE_NONE, 'If defined, show inactive crontasks')
         ;
@@ -51,7 +51,7 @@ class CronTaskListCommand extends ContainerAwareCommand{
 
         foreach($crontasks as $crontask){
             $color = $crontask->getIsActive() ? 'green' : 'red';
-            if($this->getOption('detail')){
+            if($input->getOption('details')){
                 $table = $this->getHelper('table');
                 $table->setHeaders(array('Name', 'Active', 'last run', 'command interval', 'command list'))
                     ->setRows(array(

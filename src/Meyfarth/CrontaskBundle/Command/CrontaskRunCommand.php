@@ -25,7 +25,7 @@ class CrontaskRunCommand extends ContainerAwareCommand {
     private $output;
 
     protected function configure(){
-        $this->setName('meyfarth:crontask:run')
+        $this->setName('mey:crontask:run')
             ->setDescription('Runs Crontasks')
             ->addOption('force', null, InputOption::VALUE_REQUIRED |InputOption::VALUE_IS_ARRAY, 'Forces crontasks even if inactive or if the lastrun is outdated')
             ->addOption('ignore', null, InputOption::VALUE_REQUIRED |InputOption::VALUE_IS_ARRAY, 'Ignores crontask even if it should be run');

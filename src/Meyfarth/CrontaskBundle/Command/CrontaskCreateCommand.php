@@ -35,7 +35,7 @@ class CrontaskCreateCommand extends ContainerAwareCommand {
     private $output;
 
     protected function configure(){
-        $this->setName('meyfarth:crontask:create')
+        $this->setName('mey:crontask:create')
             ->setDescription('Creates a new crontask')
             ->addArgument('name', InputArgument::REQUIRED, 'Name of the crontask (must be unique)')
             ->addArgument('interval', InputArgument::OPTIONAL, 'interval between two crontasks. You can set it to hours, minutes or seconds using typeInterval argument')
@@ -104,6 +104,7 @@ class CrontaskCreateCommand extends ContainerAwareCommand {
                 ->setFirstRun(new \DateTime($firstRun))
                 ->setIsActive(!$inactive)
                 ->setName($name)
+                ->setCommands($commands)
                 ->setTypeInterval(CrontaskService::convertToTypeInterval($typeInterval));
             $output->writeln('<comment>Crontask "'.$crontask.'" successfully created</comment>');
             $em->persist($crontask);
@@ -124,6 +125,11 @@ class CrontaskCreateCommand extends ContainerAwareCommand {
      */
     private function checkArgument($argument, $type, $question, $nullable = false, $allowedValues = null){
         // Check arguments types
+
+        if($nullable === true && $argument == 'null'){
+            return null;
+        }
+
         $argument = $this->checkTypeOrNull($argument, $type, $allowedValues);
 
         // Check if arguments are set
@@ -139,6 +145,8 @@ class CrontaskCreateCommand extends ContainerAwareCommand {
 
             $argument = $this->checkTypeOrNull($argument, $type, $allowedValues);
         }
+
+
         return $argument;
     }
 
