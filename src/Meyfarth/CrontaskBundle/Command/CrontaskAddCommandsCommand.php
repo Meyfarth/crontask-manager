@@ -94,7 +94,7 @@ class CrontaskAddCommandsCommand extends ContainerAwareCommand {
             $em->flush();
             $output->writeln('<success>Crontask updated successfully</success>');
         }else{
-            $output->writeln('<fg=red>Updating aborted</fg>');
+            $output->writeln('<fg=red>Update aborted</fg>');
         }
     }
 }

@@ -13,13 +13,10 @@ namespace Meyfarth\CrontaskBundle\Command;
 use Meyfarth\CrontaskBundle\Entity\Crontask;
 use Meyfarth\CrontaskBundle\Service\CrontaskService;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Output\StreamOutput;
 
 /**
  * Class CrontaskRunCommand
@@ -105,7 +102,7 @@ class CrontaskCreateCommand extends ContainerAwareCommand {
                 ->setIsActive(!$inactive)
                 ->setName($name)
                 ->setCommands($commands)
-                ->setTypeInterval(CrontaskService::convertToTypeInterval($typeInterval));
+                ->setIntervalType(CrontaskService::convertToTypeInterval($typeInterval));
             $output->writeln('<comment>Crontask "'.$crontask.'" successfully created</comment>');
             $em->persist($crontask);
             $em->flush();
@@ -164,7 +161,7 @@ class CrontaskCreateCommand extends ContainerAwareCommand {
                 $argument = null;
             }
         }elseif($type == self::TYPE_ARGUMENT_DATETIME){
-            if(!$this->validateDate($argument, 'Y-m-d H:i')){
+            if(CrontaskService::ValidateDate($argument, CrontaskService::DATE_FORMAT)){
                 $argument = null;
             }
         }
@@ -174,22 +171,5 @@ class CrontaskCreateCommand extends ContainerAwareCommand {
         }
 
         return $argument;
-    }
-
-    /**
-     * Check if the given string is a valid date format
-     * @param string $date
-     * @param string $format
-     * @return bool
-     */
-    private function ValidateDate($date, $format = 'Y-m-d H:i:s') {
-        $version = explode('.', phpversion());
-        if (((int) $version[0] >= 5 && (int) $version[1] >= 2 && (int) $version[2] > 17)) {
-            $d = \DateTime::createFromFormat($format, $date);
-        } else {
-            $d = new \DateTime(date($format, strtotime($date)));
-        }
-
-        return $d && $d->format($format) == $date;
     }
 }

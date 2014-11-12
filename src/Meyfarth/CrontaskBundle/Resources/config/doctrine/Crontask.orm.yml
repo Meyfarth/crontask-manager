@@ -1,6 +1,7 @@
 Meyfarth\CrontaskBundle\Entity\Crontask:
     type: entity
     table: meyfarth_crontask
+    repositoryClass: Meyfarth\CrontaskBundle\Repository\CrontaskRepository
     id:
         id:
             type: integer
@@ -16,9 +17,9 @@ Meyfarth\CrontaskBundle\Entity\Crontask:
         commandInterval:
             type: integer
             column: command_interval
-        typeInterval:
+        intervalType:
             type: smallint
-            column: type_interval
+            column: interval_type
         firstRun:
             type: datetime
             column: first_run

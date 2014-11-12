@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @author sebastien
  * @package Meyfarth\CrontaskBundle\Command
  */
-class CronTaskListCommand extends ContainerAwareCommand{
+class CrontaskListCommand extends ContainerAwareCommand{
 
     protected function configure(){
 
@@ -55,7 +55,7 @@ class CronTaskListCommand extends ContainerAwareCommand{
                 $table = $this->getHelper('table');
                 $table->setHeaders(array('Name', 'Active', 'last run', 'command interval', 'command list'))
                     ->setRows(array(
-                            $crontask->getName(), $crontask->getIsActive() ? 'yes' : 'no', $crontask->getLastRun()->format('Y-m-d H:i:s'), $crontask->getCommandInterval().' '.($crontask->getTypeInterval() == CrontaskService::TYPE_INTERVAL_SECONDS ? 's' : ( $crontask->getTypeInterval() == CrontaskService::TYPE_INTERVAL_MINUTES ? 'm' : 'h')), implode(', ', $crontask->getCommands())
+                            $crontask->getName(), $crontask->getIsActive() ? 'yes' : 'no', $crontask->getLastRun()->format('Y-m-d H:i:s'), $crontask->getCommandInterval().' '.($crontask->getIntervalType() == CrontaskService::INTERVAL_TYPE_SECONDS ? 's' : ( $crontask->getIntervalType() == CrontaskService::INTERVAL_TYPE_MINUTES ? 'm' : 'h')), implode(', ', $crontask->getCommands())
                         ));
                 $table->render($output);
             }else{

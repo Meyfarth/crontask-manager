@@ -48,10 +48,10 @@ class Crontask
     /**
      * @var integer
      */
-    private $typeInterval;
+    private $intervalType;
 
     public function __construct(){
-        $this->typeInterval = CrontaskService::TYPE_INTERVAL_SECONDS;
+        $this->intervalType = CrontaskService::INTERVAL_TYPE_SECONDS;
     }
 
     /**
@@ -208,25 +208,25 @@ class Crontask
     }
 
     /**
-     * Set typeInterval
+     * Set intervalType
      *
-     * @param integer $typeInterval
+     * @param integer $intervalType
      * @return Crontask
      */
-    public function setTypeInterval($typeInterval)
+    public function setIntervalType($intervalType)
     {
-        $this->typeInterval = $typeInterval;
+        $this->intervalType = $intervalType;
 
         return $this;
     }
 
     /**
-     * Get typeInterval
+     * Get intervalType
      *
      * @return integer 
      */
-    public function getTypeInterval()
+    public function getIntervalType()
     {
-        return $this->typeInterval;
+        return $this->intervalType;
     }
 }

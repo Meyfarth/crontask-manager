@@ -59,13 +59,7 @@ class CrontaskRemoveCommandsCommand extends ContainerAwareCommand {
         }
 
 
-        // Merge the commands with the ones passed as option
-        $commands = array_merge($crontask->getCommands(), $commands);
-
         $this->dialog = $this->getHelperSet()->get('dialog');
-
-        $output->writeln('<fg=red>Please note that commands will be executed in the given order</fg=red>');
-        $output->writeln('');
 
         $output->writeln(sprintf('Current commands are (in order) "%s"', implode('", "', $commands)));
         $output->writeln('');
@@ -74,18 +68,20 @@ class CrontaskRemoveCommandsCommand extends ContainerAwareCommand {
         do{
             $command = $this->dialog->ask(
                 $output,
-                'Enter a command to add or press Enter when finished : '
+                'Enter the full command you want to remove or press Enter when finished : '
             );
             if($command != ''){
                 $commands[] = $command;
             }
         }while($command != '');
 
+        $crontask->setCommands(array_diff($crontask->getCommands(), $commands));
+
         // Confirm
         if($this->dialog->askConfirmation(
             $output,
             sprintf('<question>Confirm updating to "%s" commands ? </question>',
-                implode('", "', $commands)),
+                implode('", "', $crontask->getCommands())),
             false
         )){
             $output->writeln('<info>Updating the crontask</info>');
@@ -94,7 +90,7 @@ class CrontaskRemoveCommandsCommand extends ContainerAwareCommand {
             $em->flush();
             $output->writeln('<success>Crontask updated successfully</success>');
         }else{
-            $output->writeln('<fg=red>Updating aborted</fg>');
+            $output->writeln('<fg=red>Update aborted</fg>');
         }
     }
 }

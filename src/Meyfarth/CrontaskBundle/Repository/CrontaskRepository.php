@@ -17,7 +17,7 @@ class CrontaskRepository extends EntityRepository {
      * Get all actives crontasks
      * @return mixed
      */
-    public function findAllActive(){
+    public function findAllActives(){
         return $this->createQueryBuilder('c')
             ->andWhere('c.isActive = :active')
             ->setParameter('active', true)

@@ -3,6 +3,7 @@
 namespace Meyfarth\CrontaskBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Meyfarth\CrontaskBundle\Service\CrontaskService;
 
 /**
  * Crontask
@@ -44,6 +45,14 @@ class Crontask
      */
     private $isActive;
 
+    /**
+     * @var integer
+     */
+    private $typeInterval;
+
+    public function __construct(){
+        $this->typeInterval = CrontaskService::TYPE_INTERVAL_SECONDS;
+    }
 
     /**
      * Get id
@@ -196,5 +205,28 @@ class Crontask
 
     public function __toString(){
         return $this->getName();
+    }
+
+    /**
+     * Set typeInterval
+     *
+     * @param integer $typeInterval
+     * @return Crontask
+     */
+    public function setTypeInterval($typeInterval)
+    {
+        $this->typeInterval = $typeInterval;
+
+        return $this;
+    }
+
+    /**
+     * Get typeInterval
+     *
+     * @return integer 
+     */
+    public function getTypeInterval()
+    {
+        return $this->typeInterval;
     }
 }

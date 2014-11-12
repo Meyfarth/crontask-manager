@@ -89,7 +89,7 @@ class CrontaskRunCommand extends ContainerAwareCommand {
             $lastrun = $crontask->getLastRun() ? $crontask->getLastRun()->format('U') : 0;
 
             // Interval in minutes
-            $nextrun = $lastrun + $crontask->getCommandInterval() * $crontask->getTypeInterval();
+            $nextrun = $lastrun + $crontask->getCommandInterval() * $crontask->getIntervalType();
 
 
 
