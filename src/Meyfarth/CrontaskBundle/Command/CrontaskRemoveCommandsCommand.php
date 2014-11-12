@@ -61,7 +61,7 @@ class CrontaskRemoveCommandsCommand extends ContainerAwareCommand {
 
         $this->dialog = $this->getHelperSet()->get('dialog');
 
-        $output->writeln(sprintf('Current commands are (in order) "%s"', implode('", "', $commands)));
+        $output->writeln(sprintf('Current commands are (in order) "%s"', implode('", "', $crontask->getCommands())));
         $output->writeln('');
 
         // Add comands to the ones given with --command="" options
@@ -88,9 +88,9 @@ class CrontaskRemoveCommandsCommand extends ContainerAwareCommand {
             $crontask->setCommands($commands);
             $em->persist($crontask);
             $em->flush();
-            $output->writeln('<success>Crontask updated successfully</success>');
+            $output->writeln('<fg=green>Crontask updated successfully</fg=green>');
         }else{
-            $output->writeln('<fg=red>Update aborted</fg>');
+            $output->writeln('<fg=red>Update aborted</fg=red>');
         }
     }
 }
