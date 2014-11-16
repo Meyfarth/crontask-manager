@@ -27,7 +27,7 @@ class CrontaskService {
      * @param $stringInterval
      * @return int
      */
-    public static function convertToTypeInterval($stringInterval){
+    public static function convertToIntervalType($stringInterval){
         if(in_array($stringInterval, array('h', 'hour', 'hours'))){
             return self::INTERVAL_TYPE_HOURS;
         }elseif(in_array($stringInterval, array('m', 'min', 'minute', 'minutes'))){

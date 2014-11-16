@@ -48,19 +48,29 @@ class CrontaskListCommand extends ContainerAwareCommand{
         }else{
             $crontasks = $em->getRepository('MeyfarthCrontaskBundle:Crontask')->findAllActives();
         }
+        if(count($crontasks) == 0){
+            $output->writeln('No crontask found');
+            exit();
+        }
+
+        $crontaskData = array();
 
         foreach($crontasks as $crontask){
-            $color = $crontask->getIsActive() ? 'green' : 'red';
             if($input->getOption('details')){
-                $table = $this->getHelper('table');
-                $table->setHeaders(array('Name', 'Active', 'last run', 'command interval', 'command list'))
-                    ->setRows(array(
-                            $crontask->getName(), $crontask->getIsActive() ? 'yes' : 'no', $crontask->getLastRun()->format('Y-m-d H:i:s'), $crontask->getCommandInterval().' '.($crontask->getIntervalType() == CrontaskService::INTERVAL_TYPE_SECONDS ? 's' : ( $crontask->getIntervalType() == CrontaskService::INTERVAL_TYPE_MINUTES ? 'm' : 'h')), implode(', ', $crontask->getCommands())
-                        ));
-                $table->render($output);
+                $crontaskData[] = array(
+                    $crontask->getName(), $crontask->getIsActive() ? 'yes' : 'no', $crontask->getLastRun() != null ? $crontask->getLastRun()->format('Y-m-d H:i:s') : 'N/A', $crontask->getCommandInterval().' '.($crontask->getIntervalType() == CrontaskService::INTERVAL_TYPE_SECONDS ? 's' : ( $crontask->getIntervalType() == CrontaskService::INTERVAL_TYPE_MINUTES ? 'm' : 'h')), implode(', ', $crontask->getCommands())
+                );
             }else{
+                $color = $crontask->getIsActive() ? 'green' : 'red';
                 $output->writeln($crontask->getName()." (<fg=$color>".($crontask->getIsActive() ? 'active' : 'inactive')."</fg=$color>)");
             }
+        }
+
+        if($input->getOption('details')){
+            $table = $this->getHelper('table');
+            $table->setHeaders(array('Name', 'Active', 'last run', 'command interval', 'command list'))
+                ->setRows($crontaskData);
+            $table->render($output);
         }
     }
 }

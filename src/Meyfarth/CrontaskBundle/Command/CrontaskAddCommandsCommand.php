@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\StreamOutput;
 
 /**
- * Class CrontaskRunCommand
+ * Class CrontaskAddCommandsCommand
  * @package Meyfarth\CrontaskBundle\Command
  */
 class CrontaskAddCommandsCommand extends ContainerAwareCommand {
@@ -31,9 +31,19 @@ class CrontaskAddCommandsCommand extends ContainerAwareCommand {
 
     protected function configure(){
         $this->setName('mey:crontask:add-command')
-            ->setDescription('Add one or more commands to the crontask\'s command list')
+            ->setDescription('Add one or more command to the crontask\'s command list')
             ->addArgument('name', InputArgument::REQUIRED, 'Name of the crontask')
-            ->addOption('command', 'c', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'if set, add the command to the command list');
+            ->addOption('command', 'c', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'if set, add the command to the command list')
+            ->setHelp(<<<EOT
+The <info>%command.name%</info> command adds one or more command to the [name] crontask.
+
+<info>php %command.full_name% name --command="command1" --command="command2"</info>
+
+You can add multiple commands by using multiple times the <info>--command</info> option.
+
+EOT
+            )
+        ;
 
     }
 

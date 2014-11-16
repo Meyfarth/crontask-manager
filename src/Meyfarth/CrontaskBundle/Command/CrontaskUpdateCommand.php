@@ -39,6 +39,30 @@ class CrontaskUpdateCommand extends ContainerAwareCommand {
             ->addOption('interval', null, InputOption::VALUE_REQUIRED, 'Set the time between two runs (depending on the interval type)')
             ->addOption('first-run', null, InputOption::VALUE_REQUIRED, 'Set the first run. If the crontask has already run, it will set the next run. Format "Y-m-d H:i"')
             ->addOption('name', null, InputOption::VALUE_REQUIRED, 'Set the name of the crontask')
+        ->setHelp(<<<EOT
+The <info>%command.name%</info> command updates a crontask by its name.
+
+<info>php %command.full_name% name</info>
+
+The following options are available :
+<info>--is-active=[0|1]</info> - 0 to deactivate the crontask, 1 to activate it
+
+<info>--interval-type</info> - to set the interval type. Allowed values are :
+h, hour, hours, m, min, minute, minutes, s, sec, second, seconds
+
+<info>--interval</info> - interval between two runs (depending on interval type)
+
+<info>--first-run</info> - set the time of the first run. If the crontask has
+already been executed, it will set the time of the next run.
+
+<info>--name</info> - set the new name of the crontask
+
+
+<info> %command.name% "crontask name" --is-active=1 --interval-type="h" --interval="24"</info>
+will activate the crontask "crontask name" and configure it to be executed every 24 hours.
+
+EOT
+)
             ;
     }
 
@@ -111,7 +135,7 @@ class CrontaskUpdateCommand extends ContainerAwareCommand {
         }
 
         if($intervalType != null){
-            $outputConfirmation[] = sprintf('Interval type: %s => %s', CrontaskService::convertFromTypeInterval($crontask->getIntervalType()), CrontaskService::convertFromTypeInterval(CrontaskService::convertToTypeInterval($intervalType)));
+            $outputConfirmation[] = sprintf('Interval type: %s => %s', CrontaskService::convertFromTypeInterval($crontask->getIntervalType()), CrontaskService::convertFromTypeInterval(CrontaskService::convertToIntervalType($intervalType)));
         }
 
         if($interval != null){
@@ -139,7 +163,7 @@ class CrontaskUpdateCommand extends ContainerAwareCommand {
             $crontask
                 ->setName($nextName != null ? $nextName : $crontask->getName())
                 ->setIsActive($isActive != null ? $isActive : $crontask->getIsActive())
-                ->setIntervalType($intervalType != null ? CrontaskService::convertToTypeInterval($intervalType): $crontask->getIntervalType())
+                ->setIntervalType($intervalType != null ? CrontaskService::convertToIntervalType($intervalType): $crontask->getIntervalType())
                 ->setCommandInterval($interval != null ? $interval : $crontask->getCommandInterval())
                 ->setFirstRun($firstRun != null ? new \DateTime($firstRun) : $crontask->getFirstRun())
                 ->setLastRun($firstRun != null ? null : $crontask->getLastRun());

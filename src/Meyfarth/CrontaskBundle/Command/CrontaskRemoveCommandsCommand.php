@@ -33,7 +33,21 @@ class CrontaskRemoveCommandsCommand extends ContainerAwareCommand {
         $this->setName('mey:crontask:remove-command')
             ->setDescription('Remove one or more command of the crontask\'s command list')
             ->addArgument('name', InputArgument::REQUIRED, 'Name of the crontask')
-            ->addOption('command', 'c', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'if set, remove the command of the command list');
+            ->addOption('command', 'c', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'if set, remove the command of the command list')
+            ->setHelp(<<<EOT
+The <info>%command.name%</info> command removes one or more command to the [name] crontask.
+
+<info>php %command.full_name% name --command="command1" --command="command2"</info>
+
+To remove a command, you must use its full name. If your command is "assets:install web", you
+must use "mey:crontask:remove-command [name] --command="assets:install web"
+
+You can add multiple commands by using multiple times the <info>--command</info> option.
+
+
+EOT
+            )
+        ;
 
     }
 
